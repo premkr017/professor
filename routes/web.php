@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -34,8 +36,16 @@ Route::middleware(['auth'])->group(function () {
     // Categories
     Route::resource('categories', CategoryController::class);
 
-    // Transactions
+// Transactions
     Route::resource('transactions', TransactionController::class);
+
+    // Income Management
+    Route::get('/income', [IncomeController::class, 'index'])->name('income.index');
+    Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
+
+    // Expense Management
+    Route::get('/expense', [ExpenseController::class, 'index'])->name('expense.index');
+    Route::post('/expense', [ExpenseController::class, 'store'])->name('expense.store');
 
     // Budgets
     Route::resource('budgets', BudgetController::class);

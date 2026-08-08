@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\IncomeController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +45,12 @@ class AuthController extends Controller
             'mobile'   => $request->mobile,
             'password' => $request->password,
         ]);
+
+// Seed default income sources (categories) for the new user
+        IncomeController::seedDefaultSources($user->id);
+
+        // Seed default expense categories for the new user
+        ExpenseController::seedDefaultCategories($user->id);
 
         Auth::login($user);
 

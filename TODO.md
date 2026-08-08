@@ -33,9 +33,45 @@
 - [x] Create view: admin/transactions/edit.blade.php
 - [x] Run migrate and storage:link
 - [x] Verify routes and PHP syntax
+- [x] Commit & push to `blackboxai/transactions-module` branch
+
+## Income Management Module (💰)
+- [x] Define default income sources constant (Salary, Freelancing, Business, Commission, Interest, Rent, Investment, Bonus, Gift, Other)
+- [x] Seed default income categories for users on registration (AuthController)
+- [x] Create IncomeController (index + store)
+- [x] Add routes for income page
+- [x] Create view: admin/income/index.blade.php (month breakdown, quick add, recent income)
+- [x] Add "Income" nav link in layout sidebar
+- [x] Update TODO.md
+- [x] Verify PHP syntax & routes
+
+## Expense Management Module (🛒)
+- [x] Define default expense categories constant (Food, Rent, Electricity, Mobile, Transport, Shopping, Education, Medical, Entertainment, EMI, Bills, Other)
+- [x] Seed default expense categories for users on registration (AuthController)
+- [x] Create ExpenseController (index + store)
+- [x] Add routes for expense page
+- [x] Create view: admin/expense/index.blade.php (month breakdown, quick add, recent expenses)
+- [x] Add "Expenses" nav link in layout sidebar
+- [x] Update TODO.md
+- [x] Verify PHP syntax & routes
+- [ ] Commit & push to `blackboxai/expense-module` branch
+
+## Categories Module (📊)
+- [x] Migration: add parent_id + status columns to categories table
+- [x] Model: add parent/children relationships + path helper + status scope
+- [x] Controller: handle parent_id, status, hierarchical index, prevent self-parent
+- [x] Update seeders (Income/Expense) to build hierarchical Food/Transport trees
+- [x] Create view: admin/categories/index.blade.php (hierarchical tree)
+- [x] Create view: admin/categories/create.blade.php
+- [x] Create view: admin/categories/edit.blade.php
+- [x] Run migration
+- [x] Verify routes and PHP syntax
+- [ ] Commit & push to `blackboxai/categories-module` branch
 
 ## Phase 4: Extras
+- [x] Budget management screens and routes
+- [x] Recurring transaction screens and routes
+- [x] Savings goals screens and routes
 - [ ] Profile & Settings pages (edit profile, change password)
 - [ ] Notifications system
 - [ ] Test the app end-to-end
-

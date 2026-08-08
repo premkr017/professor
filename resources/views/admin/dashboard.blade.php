@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Trend chart (income vs expense)
             const ctx = document.getElementById('trendChart');
             if (ctx) {
                 const data = @json($chartData);
@@ -32,12 +33,52 @@
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: { position: 'bottom' }
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.dataset.label ? context.dataset.label + ': ' : '';
+                                        const value = context.parsed && context.parsed.y !== undefined ? context.parsed.y : context.raw;
+                                        return label + '₹' + Number(value).toLocaleString();
+                                    }
+                                }
+                            }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                ticks: { callback: v => '$' + v.toLocaleString() }
+                                ticks: { callback: v => '₹' + v.toLocaleString() }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Expense pie chart (this month)
+            const ctx2 = document.getElementById('expenseChart');
+            if (ctx2) {
+                const data2 = @json($expenseByCategory ?? []);
+                const labels = data2.map(d => d.label);
+                const values = data2.map(d => d.value);
+
+                new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{ data: values, backgroundColor: ['#ef4444','#f97316','#f59e0b','#16a34a','#3b82f6','#8b5cf6','#06b6d4'] }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || context.raw || 0;
+                                        return label + ': ₹' + Number(value).toLocaleString();
+                                    }
+                                }
                             }
                         }
                     }
@@ -94,6 +135,10 @@
             </div>
             @if($accounts->count())
                 @foreach($accounts as $account)
+                    @php
+                        $isNegative = $account->balance < 0;
+                        $typeLabel = \App\Http\Controllers\AccountController::ACCOUNT_TYPES[$account->type] ?? ucfirst(str_replace('_', ' ', $account->type));
+                    @endphp
                     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9">
                         <div style="display:flex;align-items:center;gap:12px">
                             <span class="stat-icon" style="width:40px;height:40px;background:{{ $account->color }}22;color:{{ $account->color }}">
@@ -101,10 +146,10 @@
                             </span>
                             <div>
                                 <div style="font-weight:600;color:#0f172a">{{ $account->name }}</div>
-                                <div style="font-size:12px;color:#94a3b8">{{ ucfirst(str_replace('_', ' ', $account->type)) }}</div>
+                                <div style="font-size:12px;color:#94a3b8">{{ $typeLabel }}</div>
                             </div>
                         </div>
-                        <div style="font-weight:700;color:#0f172a">${{ number_format($account->balance, 2) }}</div>
+                        <div style="font-weight:700;color:{{ $isNegative ? '#dc2626' : '#0f172a' }}">{{ $isNegative ? '-' : '' }}{{ $account->currency }} {{ number_format(abs($account->balance), 2) }}</div>
                     </div>
                 @endforeach
             @else
@@ -165,27 +210,29 @@
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <div class="card-title">Budget Health</div>
-                <a href="{{ route('budgets.index') }}" class="btn btn-secondary btn-sm">Manage</a>
-            </div>
-            @if($budgets->count())
-                @foreach($budgets as $budget)
-                    @php
-                        $pct = $budget->amount > 0 ? round(($budget->spent / $budget->amount) * 100) : 0;
-                        $barClass = $pct > 100 ? 'red' : ($pct > 75 ? 'amber' : 'green');
-                    @endphp
-                    <div style="margin-bottom:18px">
-                        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-                            <span style="font-weight:600;color:#334155">{{ $budget->name ?: ($budget->category->name ?? 'General') }}</span>
-                            <span style="font-size:13px;color:#64748b">${{ number_format($budget->spent, 0) }} / ${{ number_format($budget->amount, 0) }}</span>
+                <div class="card-header">
+                    <div class="card-title">Budget Health</div>
+                    <a href="{{ route('budgets.index') }}" class="btn btn-secondary btn-sm">Manage</a>
+                </div>
+                @if(isset($budgetProgress) && $budgetProgress->count())
+                    @foreach($budgetProgress as $item)
+                        @php
+                            $b = $item['budget'];
+                            $spent = $item['spent'];
+                            $pct = $item['percent'];
+                            $barClass = $pct > 100 ? 'red' : ($pct > 75 ? 'amber' : 'green');
+                        @endphp
+                        <div style="margin-bottom:18px">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                                <span style="font-weight:600;color:#334155">{{ $b->name ?: ($b->category->name ?? 'General') }}</span>
+                                <span style="font-size:13px;color:#64748b">${{ number_format($spent, 0) }} / ${{ number_format($b->amount, 0) }}</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar {{ $barClass }}" style="width:{{ min($pct, 100) }}%"></div>
+                            </div>
                         </div>
-                        <div class="progress">
-                            <div class="progress-bar {{ $barClass }}" style="width:{{ min($pct, 100) }}%"></div>
-                        </div>
-                    </div>
-                @endforeach
-            @else
+                    @endforeach
+                @else
                 <div class="empty-state">
                     <div class="icon">🎯</div>
                     <p>No budgets set for this period</p>
@@ -201,6 +248,62 @@
                     <div class="stat-value" style="color:#dc2626">${{ number_format($totalDebt, 2) }}</div>
                 </div>
                 <a href="{{ route('loans.index') }}" class="btn btn-secondary btn-sm">View Loans</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:18px">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Expense Breakdown <span style="font-size:13px;color:#94a3b8">(This month)</span></div>
+            </div>
+            <canvas id="expenseChart" height="180"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Pending & Upcoming</div>
+            </div>
+
+            <div style="margin-bottom:12px">
+                <div style="font-weight:600;margin-bottom:6px">Pending / Recurring Payments</div>
+                @if(isset($upcomingRecurrings) && $upcomingRecurrings->count())
+                    @foreach($upcomingRecurrings as $r)
+                        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9">
+                            <div>
+                                <div style="font-weight:600">{{ $r->description ?: ($r->category->name ?? 'Recurring') }}</div>
+                                <div style="font-size:12px;color:#94a3b8">{{ $r->next_date->format('M d') }} • {{ ucfirst($r->frequency) }}</div>
+                            </div>
+                            <div style="font-weight:700;color:#0f172a">{{ $r->account->currency ?? '$' }}{{ number_format($r->amount, 2) }}</div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="empty-state">
+                        <div class="icon">🔁</div>
+                        <p>No upcoming recurring payments</p>
+                    </div>
+                @endif
+            </div>
+
+            <div>
+                <div style="font-weight:600;margin-bottom:6px">Savings Goals</div>
+                @if(isset($savingsGoals) && $savingsGoals->count())
+                    @foreach($savingsGoals as $s)
+                        @php $g = $s['goal']; $percent = $s['percent']; @endphp
+                        <div style="margin-bottom:12px">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                                <span style="font-weight:600;color:#334155">{{ $g->name }}</span>
+                                <span style="font-size:13px;color:#64748b">{{ $percent }}%</span>
+                            </div>
+                            <div class="progress"><div class="progress-bar green" style="width:{{ min($percent,100) }}%"></div></div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="empty-state">
+                        <div class="icon">💰</div>
+                        <p>No savings goals yet</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

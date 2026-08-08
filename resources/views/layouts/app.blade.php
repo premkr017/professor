@@ -595,8 +595,14 @@
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <span class="icon">📊</span> Overview
             </a>
-            <a href="{{ route('transactions.index') }}" class="nav-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
+<a href="{{ route('transactions.index') }}" class="nav-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
                 <span class="icon">💳</span> Transactions
+            </a>
+<a href="{{ route('income.index') }}" class="nav-item {{ request()->routeIs('income.*') ? 'active' : '' }}">
+                <span class="icon">💰</span> Income
+            </a>
+            <a href="{{ route('expense.index') }}" class="nav-item {{ request()->routeIs('expense.*') ? 'active' : '' }}">
+                <span class="icon">🛒</span> Expenses
             </a>
 
             <div class="nav-label">Finance</div>
