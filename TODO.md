@@ -12,10 +12,27 @@
 - [x] Add RESTful resource routes under auth middleware
 
 ## Phase 3: Views
-- [ ] Build shared admin layout with sidebar navigation
-- [ ] Build Dashboard Overview (summary cards, recent transactions, charts)
-- [ ] Create views for each module (index/create/edit)
-- [ ] Build Reports & Analytics with Chart.js
+- [x] Build shared admin layout with sidebar navigation
+
+## Accounts / Wallets Module (enhancement)
+- [x] Migration: add bank_name, account_number, opening_balance columns + expand type enum
+- [x] Model: add new fields to $fillable
+- [x] Controller: add ACCOUNT_TYPES constant, update validation, set initial balance
+- [x] Create view: admin/accounts/create.blade.php
+- [x] Create view: admin/accounts/edit.blade.php
+- [x] Update view: admin/accounts/index.blade.php (richer cards, negative balance handling)
+- [x] Update dashboard account listing for consistency
+- [x] Run migration
+
+## Transactions Module (core)
+- [x] Migration: add payment_method, attachment, to_account_id columns
+- [x] Model: add new fields to $fillable + toAccount relationship
+- [x] Controller: add PAYMENT_METHODS constant, transfer balance logic, attachment upload
+- [x] Create view: admin/transactions/create.blade.php
+- [x] Update view: admin/transactions/index.blade.php (summary cards, filters, table)
+- [x] Create view: admin/transactions/edit.blade.php
+- [x] Run migrate and storage:link
+- [x] Verify routes and PHP syntax
 
 ## Phase 4: Extras
 - [ ] Profile & Settings pages (edit profile, change password)
