@@ -72,6 +72,8 @@
 - [x] Budget management screens and routes
 - [x] Recurring transaction screens and routes
 - [x] Savings goals screens and routes
+- [x] Loans & debts screens and routes
+- [x] Reports & analytics screen
+- [x] Notifications screen
 - [ ] Profile & Settings pages (edit profile, change password)
-- [ ] Notifications system
 - [ ] Test the app end-to-end

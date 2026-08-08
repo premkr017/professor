@@ -25,10 +25,16 @@ Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submi
 Route::get('/admin/register', [AuthController::class, 'showRegistrationForm'])->name('admin.register');
 Route::post('/admin/register', [AuthController::class, 'register'])->name('admin.register.submit');
 
+// Public landing page
+Route::view('/welcome', 'welcome')->name('welcome');
+
 // Protected routes (requires authentication)
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin-panel', function () {
+        return view('admin.index');
+    })->name('admin.index');
 
     // Accounts / Wallets
     Route::resource('accounts', AccountController::class);

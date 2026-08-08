@@ -583,9 +583,9 @@
 
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <div class="logo">$</div>
+            <div class="logo">P</div>
             <div>
-                <div class="brand-text">Money Manager</div>
+                <div class="brand-text">Professor</div>
                 <div class="brand-sub">Personal Finance</div>
             </div>
         </div>
@@ -594,6 +594,9 @@
             <div class="nav-label">Main</div>
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <span class="icon">📊</span> Overview
+            </a>
+            <a href="{{ route('admin.index') }}" class="nav-item {{ request()->routeIs('admin.index') ? 'active' : '' }}">
+                <span class="icon">🛠️</span> Admin Panel
             </a>
 <a href="{{ route('transactions.index') }}" class="nav-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
                 <span class="icon">💳</span> Transactions
